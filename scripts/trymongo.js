@@ -3,7 +3,7 @@ const {
   MongoClient,
 } = require('mongodb');
 
-const url = process.env.DB_URL || 'mongodb://localhost/issuetracker';
+const url = process.env.DB_URL || 'mongodb://localhost/goodFirYou';
 
 function testWithCallbacks(callback) {
   console.log('\n--- testWithCallbacks ---');

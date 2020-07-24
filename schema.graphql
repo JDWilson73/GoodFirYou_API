@@ -29,7 +29,7 @@ input branchInputs {
   title: String!
   "Optional, if not supplied, will be set to 'User'"
   status: StatusType = User
-  owner: User!
+  owner: String!
   description: String
 }
 
@@ -38,8 +38,8 @@ be set to the given value, undefined fields will remain unmodified."""
 input BranchUpdateInputs {
   title: String
   details: String
-  parent: branch
-  children: [branch]
+  parent: String
+  children: [String]
 }
 
 ##### Top level declarations

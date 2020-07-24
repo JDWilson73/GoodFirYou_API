@@ -14,67 +14,100 @@
 /* global db print */
 /* eslint no-restricted-globals: "off" */
 
-db.issues.remove({});
+db.branches.remove({});
+db.users.remove({});
 db.deleted_issues.remove({});
 
-const issuesDB = [{
+
+const branchesDB = [{
   id: 1,
-  status: 'New',
-  owner: 'Ravan',
-  effort: 5,
-  created: new Date('2019-01-15'),
-  due: undefined,
-  title: 'Error in console when clicking Add',
-  description: 'Steps to recreate the problem:'
-    + '\n1. Refresh the browser.'
-    + '\n2. Select "New" in the filter'
-    + '\n3. Refresh the browser again. Note the warning in the console:'
-    + '\n   Warning: Hash history cannot PUSH the same path; a new entry'
-    + '\n   will not be added to the history stack'
-    + '\n4. Click on Add.'
-    + '\n5. There is an error in console, and add doesn\'t work.',
+  title: 'Health',
+  owner: 'Steve',
+  created: new Date(),
+  details: 'Improve physical & mental health',
+  parent: '',
+  children: [],
 },
 {
   id: 2,
-  status: 'Assigned',
-  owner: 'Eddie',
-  effort: 14,
-  created: new Date('2019-01-16'),
-  due: new Date('2019-02-01'),
-  title: 'Missing bottom border on panel',
-  description: 'There needs to be a border in the bottom in the panel'
-    + ' that appears when clicking on Add',
+  title: 'Education',
+  owner: 'Charlie',
+  created: new Date(),
+  details: 'Learn stuff',
+  parent: '',
+  children: [],
+},
+{
+  id: 3,
+  title: 'World Domination',
+  owner: 'Dayton',
+  created: new Date(),
+  details: 'Same thing we do every night, Pinky.'
+    + '\nTry to take over the world!',
+  parent: '',
+  children: [],
 },
 ];
 
-db.issues.insertMany(issuesDB);
-const count = db.issues.count();
-print('Inserted', count, 'issues');
+const usersDB = [{
+  name: 'Dayton',
+  email: 'wilson.jos@northeastern.edu',
+  role: 'Admin',
+},
+{
+  name: 'Charlie',
+  email: 'beiser.ch@northeastern.edu',
+  role: 'Admin',
+},
+{
+  name: 'Steve',
+  email: 'swanton.s@northeastern.edu',
+  role: 'Admin',
+},
+{
+  name: 'Test User',
+  email: 'thisisfake@email.com',
+  role: 'User',
+}
+];
+
+db.branches.insertMany(branchesDB);
+const branchCount = db.branches.count();
+print('Inserted', branchCount, 'branches');
+
+db.users.insertMany(usersDB);
+const userCount = db.users.count();
+print('Inserted', userCount, 'users');
 
 db.counters.remove({
-  _id: 'issues',
+  _id: 'branches',
+});
+db.counters.remove({
+  _id: 'users',
 });
 db.counters.insert({
-  _id: 'issues',
-  current: count,
+  _id: 'branches',
+  current: branchCount,
 });
+db.counters.insert({
+  _id: 'users',
+  current: userCount,
+})
 
-db.issues.createIndex({
+db.branches.createIndex({
   id: 1,
 }, {
   unique: true,
 });
-db.issues.createIndex({
-  status: 1,
-});
-db.issues.createIndex({
+db.branches.createIndex({
   owner: 1,
 });
-db.issues.createIndex({
-  created: 1,
+db.branches.createIndex({
+  parent: 1,
 });
-db.issues.createIndex({
-  title: 'text', description: 'text',
+db.branches.createIndex({
+  children: 1,
 });
+
 
 db.deleted_issues.createIndex({ id: 1 }, { unique: true });

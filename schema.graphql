@@ -1,35 +1,19 @@
 scalar GraphQLDate
 
 enum StatusType {
-  New
-  Assigned
-  Fixed
-  Closed
+  Admin
+  User
 }
 
-type Issue {
+type branch {
   _id: ID!
   id: Int!
   title: String!
-  status: StatusType!
-  owner: String
-  effort: Int
+  owner: User!
   created: GraphQLDate!
-  due: GraphQLDate
-  description: String
-}
-
-type IssueCounts {
-  owner: String!
-  New: Int
-  Assigned: Int
-  Fixed: Int
-  Closed: Int
-}
-
-type IssueListWithPages {
-  issues: [Issue!]!
-  pages: Int
+  details: String
+  parent: branch
+  children: [branch]
 }
 
 type User {
@@ -37,28 +21,25 @@ type User {
   givenName: String
   name: String
   email: String
+  role: StatusType!
 }
 
-"Toned down Issue, used as inputs, without server generated values."
-input IssueInputs {
+"Toned down branch, used as inputs, without server generated values."
+input branchInputs {
   title: String!
-  "Optional, if not supplied, will be set to 'New'"
-  status: StatusType = New
-  owner: String
-  effort: Int
-  due: GraphQLDate
+  "Optional, if not supplied, will be set to 'User'"
+  status: StatusType = User
+  owner: User!
   description: String
 }
 
-"""Inputs for issueUpdate: all are optional. Whichever is specified will
+"""Inputs for branchUpdate: all are optional. Whichever is specified will
 be set to the given value, undefined fields will remain unmodified."""
-input IssueUpdateInputs {
+input BranchUpdateInputs {
   title: String
-  status: StatusType
-  owner: String
-  effort: Int
-  due: GraphQLDate
-  description: String
+  details: String
+  parent: branch
+  children: [branch]
 }
 
 ##### Top level declarations
@@ -66,25 +47,12 @@ input IssueUpdateInputs {
 type Query {
   about: String!
   user: User!
-  issueList(
-    status: StatusType
-    effortMin: Int
-    effortMax: Int
-    search: String
-    page: Int = 1
-  ): IssueListWithPages
-  issue(id: Int!): Issue!
-  issueCounts(
-    status: StatusType
-    effortMin: Int
-    effortMax: Int
-  ): [IssueCounts!]!
 }
 
 type Mutation {
   setAboutMessage(message: String!): String
-  issueAdd(issue: IssueInputs!): Issue!
-  issueUpdate(id: Int!, changes: IssueUpdateInputs!): Issue!
-  issueDelete(id: Int!): Boolean
-  issueRestore(id: Int!): Boolean!
+  branchAdd(branch: branchInputs!): branch!
+  branchUpdate(id: Int!, changes: BranchUpdateInputs!): branch!
+  branchDelete(id: Int!): Boolean
+  branchRestore(id: Int!): Boolean!
 }

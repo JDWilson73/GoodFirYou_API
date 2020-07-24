@@ -6,42 +6,32 @@ const PAGE_SIZE = 10;
 
 async function get(_, { id }) {
   const db = getDb();
-  const issue = await db.collection('issues').findOne({ id });
-  return issue;
+  const branch = await db.collection('branches').findOne({ id });
+  return branch;
 }
 
 async function list(_, {
-  status, effortMin, effortMax, search, page,
+  title, owner, status, created, details, parent, children
 }) {
   const db = getDb();
   const filter = {};
   if (status) filter.status = status;
 
-  if (effortMin !== undefined || effortMax !== undefined) {
-    filter.effort = {};
-    if (effortMin !== undefined) filter.effort.$gte = effortMin;
-    if (effortMax !== undefined) filter.effort.$lte = effortMax;
-  }
   if (search) filter.$text = { $search: search };
 
-  const cursor = db.collection('issues').find(filter)
-    .sort({ id: 1 })
-    .skip(PAGE_SIZE * (page - 1))
-    .limit(PAGE_SIZE);
-
   const totalCount = await cursor.count(false);
-  const issues = cursor.toArray();
+  const branches = cursor.toArray();
   const pages = Math.ceil(totalCount / PAGE_SIZE);
-  return { issues, pages };
+  return { branches, pages };
 }
 
-function validate(issue) {
+function validate(branch) {
   const errors = [];
-  if (issue.title.length < 3) {
+  if (branch.title.length < 3) {
     errors.push('Field "title" must be at least 3 characters long');
   }
-  if (issue.status === 'Assigned' && !issue.owner) {
-    errors.push('Field "owner" is required when status is "Assigned"');
+  if (!branch.owner) {
+    errors.push('Field "owner" is required');
   }
   if (errors.length > 0) {
     throw new UserInputError('Invalid input(s)', {
@@ -51,41 +41,41 @@ function validate(issue) {
 }
 
 async function add(_, {
-  issue,
+  branch,
 }) {
   const db = getDb();
-  validate(issue);
-  const newIssue = Object.assign({}, issue);
-  newIssue.created = new Date();
-  newIssue.id = await getNextSequence('issues');
-  const result = await db.collection('issues').insertOne(newIssue);
-  const savedIssue = await db.collection('issues').findOne({
+  validate(branch);
+  const newBranch = Object.assign({}, branch);
+  newBranch.created = new Date();
+  newBranch.id = await getNextSequence('branches');
+  const result = await db.collection('branches').insertOne(newBranch);
+  const savedBranch = await db.collection('branches').findOne({
     _id: result.insertedId,
   });
-  return savedIssue;
+  return savedBranch;
 }
 
 async function update(_, { id, changes }) {
   const db = getDb();
   if (changes.title || changes.status || changes.owner) {
-    const issue = await db.collection('issues').findOne({ id });
-    Object.assign(issue, changes);
-    validate(issue);
+    const branch = await db.collection('branches').findOne({ id });
+    Object.assign(branch, changes);
+    validate(branch);
   }
-  await db.collection('issues').updateOne({ id }, { $set: changes });
-  const savedIssue = await db.collection('issues').findOne({ id });
-  return savedIssue;
+  await db.collection('branches').updateOne({ id }, { $set: changes });
+  const savedbranch = await db.collection('branches').findOne({ id });
+  return savedbranch;
 }
 
 async function remove(_, { id }) {
   const db = getDb();
-  const issue = await db.collection('issues').findOne({ id });
-  if (!issue) return false;
-  issue.deleted = new Date();
+  const branch = await db.collection('branches').findOne({ id });
+  if (!branch) return false;
+  branch.deleted = new Date();
 
-  let result = await db.collection('deleted_issues').insertOne(issue);
+  let result = await db.collection('deleted_branches').insertOne(branch);
   if (result.insertedId) {
-    result = await db.collection('issues').removeOne({ id });
+    result = await db.collection('branches').removeOne({ id });
     return result.deletedCount === 1;
   }
   return false;
@@ -93,13 +83,13 @@ async function remove(_, { id }) {
 
 async function restore(_, { id }) {
   const db = getDb();
-  const issue = await db.collection('deleted_issues').findOne({ id });
-  if (!issue) return false;
-  issue.deleted = new Date();
+  const branch = await db.collection('deleted_branches').findOne({ id });
+  if (!branch) return false;
+  branch.deleted = new Date();
 
-  let result = await db.collection('issues').insertOne(issue);
+  let result = await db.collection('branches').insertOne(branch);
   if (result.insertedId) {
-    result = await db.collection('deleted_issues').removeOne({ id });
+    result = await db.collection('deleted_branches').removeOne({ id });
     return result.deletedCount === 1;
   }
   return false;
@@ -117,7 +107,7 @@ async function counts(_, { status, effortMin, effortMax }) {
     if (effortMax !== undefined) filter.effort.$lte = effortMax;
   }
 
-  const results = await db.collection('issues').aggregate([
+  const results = await db.collection('branches').aggregate([
     { $match: filter },
     {
       $group: {

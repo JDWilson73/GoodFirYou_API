@@ -1,8 +1,14 @@
 scalar GraphQLDate
 
-enum StatusType {
+enum UserType {
   Admin
   User
+}
+
+enum StatusType {
+  New
+  InProgress
+  Complete
 }
 
 type branch {
@@ -12,6 +18,7 @@ type branch {
   owner: User!
   created: GraphQLDate!
   details: String
+  status: StatusType!
   parent: branch
   children: [branch]
 }
@@ -21,14 +28,14 @@ type User {
   givenName: String
   name: String
   email: String
-  role: StatusType!
+  role: UserType!
 }
 
 "Toned down branch, used as inputs, without server generated values."
 input branchInputs {
   title: String!
   "Optional, if not supplied, will be set to 'User'"
-  status: StatusType = User
+  status: StatusType = New
   owner: String!
   description: String
 }

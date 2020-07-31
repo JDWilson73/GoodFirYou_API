@@ -1,0 +1,78 @@
+scalar GraphQLDate
+
+enum UserType {
+  Admin
+  User
+}
+
+enum StatusType {
+  New
+  InProgress
+  Complete
+}
+
+type Branch {
+  _id: ID!
+  id: Int!
+  title: String
+  owner: String
+  created: GraphQLDate
+  details: String
+  status: StatusType
+  parent: Int
+  children: [Int]
+}
+
+type User {
+  signedIn: Boolean!
+  givenName: String
+  name: String
+  email: String
+  role: UserType!
+}
+
+"Toned down branch, used as inputs, without server generated values."
+input BranchInputs {
+  title: String!
+  "Optional, if not supplied, will be set to 'New'"
+  status: StatusType = New
+  owner: String!
+  description: String
+}
+
+"""Inputs for branchUpdate: all are optional. Whichever is specified will
+be set to the given value, undefined fields will remain unmodified."""
+input BranchUpdateInputs {
+  title: String
+  status: StatusType
+  details: String
+  parent: String
+  children: [String]
+}
+
+##### Top level declarations
+
+type Query {
+  about: String!
+  user: User!
+  allUsers: [User!]!
+  aBranch(id: Int!): Branch!
+  allBranches(
+    id: Int
+    title: String
+    owner: String
+    created: GraphQLDate
+    details: String
+    status: StatusType
+    parent: Int
+    children: [Int]
+  ): [Branch]
+}
+
+type Mutation {
+  setAboutMessage(message: String!): String
+  branchAdd(Branch: BranchInputs!): Branch!
+  branchUpdate(id: Int!, changes: BranchUpdateInputs!): Branch!
+  branchDelete(id: Int!): Boolean
+  branchRestore(id: Int!): Boolean!
+}

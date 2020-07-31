@@ -25,7 +25,7 @@ const branchesDB = [{
   owner: 'Steve',
   status: 'New',
   created: new Date(),
-  details: 'Improve physical & mental health',
+  details: 'TESTImprove physical & mental healthTEST',
   parent: '',
   children: [],
 },
@@ -43,7 +43,7 @@ const branchesDB = [{
   id: 3,
   title: 'World Domination',
   owner: 'Dayton',
-  status: 'Completed',
+  status: 'Complete',
   created: new Date(),
   details: 'Same thing we do every night, Pinky.'
     + '\nTry to take over the world!',

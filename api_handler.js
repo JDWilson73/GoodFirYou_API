@@ -4,13 +4,15 @@ const { ApolloServer } = require('apollo-server-express');
 
 const GraphQLDate = require('./graphql_date.js');
 const about = require('./about.js');
-const branch = require('./issue.js');
+const branch = require('./branch.js');
 const auth = require('./auth.js');
 
 const resolvers = {
   Query: {
     about: about.getMessage,
-    user: auth.resolveUser,
+    //User: auth.resolveUser,
+    aBranch: branch.get,
+    allBranches: branch.list,
   },
   Mutation: {
     setAboutMessage: about.setMessage,

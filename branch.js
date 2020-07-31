@@ -2,7 +2,7 @@ const { UserInputError } = require('apollo-server-express');
 const { getDb, getNextSequence } = require('./db.js');
 const { mustBeSignedIn } = require('./auth.js');
 
-const PAGE_SIZE = 10;
+//const PAGE_SIZE = 10;
 
 async function get(_, { id }) {
   const db = getDb();
@@ -14,15 +14,8 @@ async function list(_, {
   title, owner, status, created, details, parent, children
 }) {
   const db = getDb();
-  const filter = {};
-  if (status) filter.status = status;
-
-  if (search) filter.$text = { $search: search };
-
-  const totalCount = await cursor.count(false);
-  const branches = cursor.toArray();
-  const pages = Math.ceil(totalCount / PAGE_SIZE);
-  return { branches, pages };
+  const cursor = await db.collection('branches').find({});
+  return cursor.toArray();
 }
 
 function validate(branch) {
@@ -129,10 +122,10 @@ async function counts(_, { status, effortMin, effortMax }) {
 
 module.exports = {
   list,
-  add: mustBeSignedIn(add),
+  add: add,//mustBeSignedIn(add),
   get,
-  update: mustBeSignedIn(update),
-  delete: mustBeSignedIn(remove),
-  restore: mustBeSignedIn(restore),
+  update: update,//mustBeSignedIn(update),
+  delete: remove,//mustBeSignedIn(remove),
+  restore: restore,//mustBeSignedIn(restore),
   counts,
 };

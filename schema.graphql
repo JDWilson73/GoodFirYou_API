@@ -11,16 +11,16 @@ enum StatusType {
   Complete
 }
 
-type branch {
+type Branch {
   _id: ID!
   id: Int!
-  title: String!
-  owner: User!
-  created: GraphQLDate!
+  title: String
+  owner: String
+  created: GraphQLDate
   details: String
-  status: StatusType!
-  parent: branch
-  children: [branch]
+  status: StatusType
+  parent: Int
+  children: [Int]
 }
 
 type User {
@@ -32,9 +32,9 @@ type User {
 }
 
 "Toned down branch, used as inputs, without server generated values."
-input branchInputs {
+input BranchInputs {
   title: String!
-  "Optional, if not supplied, will be set to 'User'"
+  "Optional, if not supplied, will be set to 'New'"
   status: StatusType = New
   owner: String!
   description: String
@@ -44,6 +44,7 @@ input branchInputs {
 be set to the given value, undefined fields will remain unmodified."""
 input BranchUpdateInputs {
   title: String
+  status: StatusType
   details: String
   parent: String
   children: [String]
@@ -54,12 +55,24 @@ input BranchUpdateInputs {
 type Query {
   about: String!
   user: User!
+  allUsers: [User!]!
+  aBranch(id: Int!): Branch!
+  allBranches(
+    id: Int
+    title: String
+    owner: String
+    created: GraphQLDate
+    details: String
+    status: StatusType
+    parent: Int
+    children: [Int]
+  ): [Branch]
 }
 
 type Mutation {
   setAboutMessage(message: String!): String
-  branchAdd(branch: branchInputs!): branch!
-  branchUpdate(id: Int!, changes: BranchUpdateInputs!): branch!
+  branchAdd(Branch: BranchInputs!): Branch!
+  branchUpdate(id: Int!, changes: BranchUpdateInputs!): Branch!
   branchDelete(id: Int!): Boolean
   branchRestore(id: Int!): Boolean!
 }

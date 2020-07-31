@@ -4,7 +4,7 @@ const { MongoClient } = require('mongodb');
 let db;
 
 async function connectToDb() {
-  const url = process.env.DB_URL || 'mongodb://localhost/issuetracker';
+  const url = process.env.DB_URL || 'mongodb://localhost/goodFirYou';
   const client = new MongoClient(url, {
     useNewURLParser: true,
   });

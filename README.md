@@ -1,5 +1,12 @@
 # GroupProject_GoodFirYou_API
 
+## Iteration 2
+
+API largely untouched save for some attempts to resolve DB connection issues
+
+---
+
+
 ## Iteration 1
 
 ### Steve Swanton Contribution

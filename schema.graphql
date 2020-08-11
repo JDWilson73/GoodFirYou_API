@@ -19,8 +19,7 @@ type Branch {
   created: GraphQLDate
   details: String
   status: StatusType
-  parent: Int
-  children: [Int]
+  tree: String
 }
 
 type User {
@@ -38,6 +37,7 @@ input BranchInputs {
   status: StatusType = New
   owner: String!
   description: String
+  tree: String
 }
 
 """Inputs for branchUpdate: all are optional. Whichever is specified will
@@ -46,8 +46,7 @@ input BranchUpdateInputs {
   title: String
   status: StatusType
   details: String
-  parent: String
-  children: [String]
+  tree: String
 }
 
 ##### Top level declarations
@@ -64,8 +63,7 @@ type Query {
     created: GraphQLDate
     details: String
     status: StatusType
-    parent: Int
-    children: [Int]
+    tree: String
   ): [Branch]
 }
 

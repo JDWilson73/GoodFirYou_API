@@ -26,8 +26,7 @@ const branchesDB = [{
   status: 'New',
   created: new Date(),
   details: 'TESTImprove physical & mental healthTEST',
-  parent: '',
-  children: [],
+  tree: '',
 },
 {
   id: 2,
@@ -36,8 +35,7 @@ const branchesDB = [{
   status: 'InProgress',
   created: new Date(),
   details: 'Learn stuff',
-  parent: '',
-  children: [],
+  tree: '',
 },
 {
   id: 3,
@@ -95,7 +93,7 @@ db.counters.insert({
 db.counters.insert({
   _id: 'users',
   current: userCount,
-})
+});
 
 db.branches.createIndex({
   id: 1,

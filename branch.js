@@ -2,19 +2,15 @@ const { UserInputError } = require('apollo-server-express');
 const { getDb, getNextSequence } = require('./db.js');
 const { mustBeSignedIn } = require('./auth.js');
 
-//const PAGE_SIZE = 10;
-
 async function get(_, { id }) {
   const db = getDb();
   const branch = await db.collection('branches').findOne({ id });
   return branch;
 }
 
-async function list(_, {
-  title, owner, status, created, details, parent, children
-}) {
+async function list(_, { owner }) {
   const db = getDb();
-  const cursor = await db.collection('branches').find({});
+  const cursor = await db.collection('branches').find({ owner });
   return cursor.toArray();
 }
 

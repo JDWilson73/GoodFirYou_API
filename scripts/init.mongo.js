@@ -18,6 +18,39 @@ db.branches.remove({});
 db.users.remove({});
 db.deleted_issues.remove({});
 
+const testTree = {
+  name: 'TreeTrunk',
+  textProps: { transform: 'rotate(90)' },
+  children: [{
+    name: 'Something I want to be better at!',
+    textProps: { transform: 'rotate(90)' },
+    children: [{
+      name: 'Fighting crime', // 'Fighting crime',
+      textProps: { transform: 'rotate(90)' },
+    }, {
+      name: 'Not killing my cacti',
+      textProps: { transform: 'rotate(90)' },
+    }],
+  }, {
+    name: 'Hobbies!',
+    textProps: { transform: 'rotate(90)' },
+    children: [{
+      name: 'Violin',
+      textProps: { transform: 'rotate(90)' },
+    }, {
+      name: 'Competitive sheep shearing',
+      textProps: { transform: 'rotate(90)' },
+    }, {
+      name: 'Killing a man before he can scream',
+      textProps: { transform: 'rotate(90)' },
+    }],
+  }, {
+    name: 'Taking better care of myself',
+    textProps: { transform: 'rotate(90)' },
+  }],
+};
+
+const toDBTest = JSON.stringify(testTree);
 
 const branchesDB = [{
   id: 1,
@@ -26,7 +59,7 @@ const branchesDB = [{
   status: 'New',
   created: new Date(),
   details: 'TESTImprove physical & mental healthTEST',
-  tree: '',
+  tree: toDBTest,
 },
 {
   id: 2,
@@ -35,7 +68,26 @@ const branchesDB = [{
   status: 'InProgress',
   created: new Date(),
   details: 'Learn stuff',
-  tree: '',
+  tree: `{
+    exercise: {
+      name: 'TreeTrunk',
+      completed: true,
+      expValue: 10,
+      textProps: { transform: 'rotate(90)' },
+      children: [{
+        name: 'EXAMPLE 1',
+        completed: false,
+        expValue: 10,
+        textProps: { transform: 'rotate(90)' },
+      },
+      {
+        name: 'EXAMPLE 2',
+        completed: true,
+        expValue: 10,
+        textProps: { transform: 'rotate(90)' },
+      }],
+    },
+  }`,
 },
 {
   id: 3,
@@ -45,8 +97,20 @@ const branchesDB = [{
   created: new Date(),
   details: 'Same thing we do every night, Pinky.'
     + '\nTry to take over the world!',
-  parent: '',
-  children: [],
+  tree: `{
+    language: {
+      name: 'SpoopTrunk',
+      textProps: { transform: 'rotate(90)' },
+      children: [{
+        name: 'SPOOP 1',
+        textProps: { transform: 'rotate(90)' },
+      },
+      {
+        name: 'SPOOP 2',
+        textProps: { transform: 'rotate(90)' },
+      }],
+    },
+  }`,
 },
 ];
 
@@ -69,7 +133,7 @@ const usersDB = [{
   name: 'Test User',
   email: 'thisisfake@email.com',
   role: 'User',
-}
+},
 ];
 
 db.branches.insertMany(branchesDB);
